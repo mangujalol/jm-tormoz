@@ -1,1081 +1,932 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JM tormoz nazorati</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JM tormoz nazorati</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #2c3e50;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        /* User Header Bar */
-        .user-bar {
-            width: 100%;
-            max-width: 520px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            margin-bottom: 15px;
-            font-size: 13px;
-        }
+        /* User Header Bar */
+        .user-bar {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
 
-        .user-info {
-            font-weight: 600;
-            color: #1e293b;
-        }
+        .user-info {
+            font-weight: 600;
+            color: #1e293b;
+        }
 
-        .logout-btn {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-        }
+        .logout-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
-        .logout-btn:hover { background-color: #dc2626; }
+        .logout-btn:hover { background-color: #dc2626; }
 
-        h1 {
-            color: #1a365d;
-            margin-bottom: 6px;
-            font-size: 24px;
-        }
+        h1 {
+            color: #1a365d;
+            margin-bottom: 6px;
+            font-size: 24px;
+        }
 
-        p.subtitle {
-            color: #64748b;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
+        p.subtitle {
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
 
-        /* Poyezd Tanlash Bloki */
-        .train-selector-container {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 10px 16px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        /* Poyezd Tanlash Bloki */
+        .train-selector-container {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-        .train-selector-label {
-            font-size: 14px;
-            font-weight: 700;
-            color: #0f172a;
-        }
+        .train-selector-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+        }
 
-        .train-buttons {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+        .train-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
 
-        .train-btn {
-            padding: 6px 12px;
-            background-color: #f1f5f9;
-            border: 1px solid #94a3b8;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-            transition: all 0.2s;
-        }
+        .train-btn {
+            padding: 6px 12px;
+            background-color: #f1f5f9;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            transition: all 0.2s;
+        }
 
-        .train-btn:hover { background-color: #e2e8f0; }
+        .train-btn:hover { background-color: #e2e8f0; }
 
-        .train-btn.active {
-            background-color: #059669;
-            color: white;
-            border-color: #047857;
-            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
-        }
+        .train-btn.active {
+            background-color: #059669;
+            color: white;
+            border-color: #047857;
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
+        }
 
-        /* Vagonlar tugmasi */
-        .wagon-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        /* Vagonlar tugmasi */
+        .wagon-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-        .wagon-btn {
-            padding: 8px 16px;
-            background-color: #e2e8f0;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #334155;
-            transition: all 0.2s ease;
-        }
+        .wagon-btn {
+            padding: 8px 16px;
+            background-color: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
 
-        .wagon-btn:hover {
-            background-color: #cbd5e1;
-        }
+        .wagon-btn:hover {
+            background-color: #cbd5e1;
+        }
 
-        .wagon-btn.active {
-            background-color: #2563eb;
-            color: white;
-            border-color: #1d4ed8;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
-        }
+        .wagon-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #1d4ed8;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
 
-        /* Yo'nalish ko'rsatkichlari */
-        .direction-banner {
-            width: 360px;
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1d4ed8;
-            font-weight: bold;
-            font-size: 13px;
-            text-align: center;
-            padding: 8px 0;
-            border-radius: 20px;
-            margin: 6px 0;
-            letter-spacing: 0.5px;
-        }
+        /* Yo'nalish ko'rsatkichlari */
+        .direction-banner {
+            width: 360px;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            font-weight: bold;
+            font-size: 13px;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 20px;
+            margin: 6px 0;
+            letter-spacing: 0.5px;
+        }
 
-        /* Poyezd Korpusi Frame */
-        .train-container {
-            position: relative;
-            width: 360px;
-            background-color: #e2e8f0;
-            border: 3px solid #64748b;
-            border-radius: 12px;
-            padding: 24px 10px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
+        /* Poyezd Korpusi Frame */
+        .train-container {
+            position: relative;
+            width: 360px;
+            background-color: #e2e8f0;
+            border: 3px solid #64748b;
+            border-radius: 12px;
+            padding: 24px 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
 
-        .train-container.nose-top {
-            border-top-left-radius: 50% 120px;
-            border-top-right-radius: 50% 120px;
-            padding-top: 55px;
-        }
+        .train-container.nose-top {
+            border-top-left-radius: 50% 120px;
+            border-top-right-radius: 50% 120px;
+            padding-top: 55px;
+        }
 
-        .train-container.nose-bottom {
-            border-bottom-left-radius: 50% 120px;
-            border-bottom-right-radius: 50% 120px;
-            padding-bottom: 55px;
-        }
+        .train-container.nose-bottom {
+            border-bottom-left-radius: 50% 120px;
+            border-bottom-right-radius: 50% 120px;
+            padding-bottom: 55px;
+        }
 
-        .current-wagon-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-            background: #ffffff;
-            padding: 6px 18px;
-            border-radius: 20px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            z-index: 2;
-        }
+        .current-wagon-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            background: #ffffff;
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 2;
+        }
 
-        .train-container.nose-top .current-wagon-title { margin-top: 10px; }
-        .train-container.nose-bottom .current-wagon-title { order: 3; margin-bottom: 10px; }
+        .train-container.nose-top .current-wagon-title { margin-top: 10px; }
+        .train-container.nose-bottom .current-wagon-title { order: 3; margin-bottom: 10px; }
 
-        /* Aravacha (Bogie) */
-        .bogie {
-            width: 100%;
-            background-color: #f8fafc;
-            border: 2px dashed #94a3b8;
-            border-radius: 12px;
-            padding: 10px 6px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-            z-index: 1;
-        }
+        /* Aravacha (Bogie) */
+        .bogie {
+            width: 100%;
+            background-color: #f8fafc;
+            border: 2px dashed #94a3b8;
+            border-radius: 12px;
+            padding: 10px 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            z-index: 1;
+        }
 
-        .bogie-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1e293b;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
+        .bogie-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
 
-        .wheel-axle-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            background: #ffffff;
-            padding: 8px 4px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
+        .wheel-axle-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            background: #ffffff;
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
 
-        .wheel-axle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
+        .wheel-axle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
 
-        .wheel-side {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
+        .wheel-side {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
 
-        .wheel {
-            width: 18px;
-            height: 42px;
-            background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
-            border-radius: 4px;
-        }
+        .wheel {
+            width: 18px;
+            height: 42px;
+            background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
+            border-radius: 4px;
+        }
 
-        .axle {
-            flex-grow: 1;
-            height: 6px;
-            background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #94a3b8 100%);
-            margin: 0 4px;
-        }
+        .axle {
+            flex-grow: 1;
+            height: 6px;
+            background: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #94a3b8 100%);
+            margin: 0 4px;
+        }
 
-        /* Pad Button */
-        .pad-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #334155;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 700;
-            color: white;
-            font-size: 9px;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            padding: 0;
-        }
+        /* Pad Button */
+        .pad-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            font-size: 9px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            padding: 0;
+        }
 
-        .pad-btn:hover {
-            transform: scale(1.15);
-            z-index: 2;
-        }
+        .pad-btn:hover {
+            transform: scale(1.15);
+            z-index: 2;
+        }
 
-        .status-blue { background-color: #2563eb; color: white; }
-        .status-yellow { background-color: #eab308; color: #1e293b; }
-        .status-red { background-color: #ef4444; color: white; }
+        .status-blue { background-color: #2563eb; color: white; }
+        .status-yellow { background-color: #eab308; color: #1e293b; }
+        .status-red { background-color: #ef4444; color: white; }
 
-        /* Controls & Report */
-        .panel {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 520px;
-            background: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
+        /* Controls & Report */
+        .panel {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 520px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
 
-        .legend {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 14px;
-            font-size: 13px;
-            font-weight: 600;
-        }
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 14px;
+            font-size: 13px;
+            font-weight: 600;
+        }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-        .color-box {
-            width: 14px;
-            height: 14px;
-            border-radius: 3px;
-        }
+        .color-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
 
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-        .report-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .report-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
 
-        .report-btn:hover { background-color: #1d4ed8; }
-        .excel-btn { background-color: #10b981; }
-        .excel-btn:hover { background-color: #059669; }
+        .report-btn:hover { background-color: #1d4ed8; }
+        .excel-btn { background-color: #10b981; }
+        .excel-btn:hover { background-color: #059669; }
 
-        #report-output {
-            margin-top: 14px;
-            padding: 12px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 13px;
-            line-height: 1.5;
-            display: none;
-            overflow-x: auto;
-        }
+        #report-output {
+            margin-top: 14px;
+            padding: 12px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            display: none;
+            overflow-x: auto;
+        }
 
-        /* ACCORDION STILI */
-        .accordion-item {
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background: #ffffff;
-            overflow: hidden;
-        }
+        /* ACCORDION STILI */
+        .accordion-item {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #ffffff;
+            overflow: hidden;
+        }
 
-        .accordion-header {
-            padding: 10px 14px;
-            font-weight: bold;
-            font-size: 13px;
-            color: #1d4ed8;
-            cursor: pointer;
-            background: #f1f5f9;
-            user-select: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-        }
+        .accordion-header {
+            padding: 10px 14px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #1d4ed8;
+            cursor: pointer;
+            background: #f1f5f9;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
 
-        .accordion-header:hover {
-            background: #e2e8f0;
-        }
+        .accordion-header:hover {
+            background: #e2e8f0;
+        }
 
-        .accordion-content {
-            padding: 10px;
-            border-top: 1px solid #cbd5e1;
-            background: #ffffff;
-        }
+        .accordion-content {
+            padding: 10px;
+            border-top: 1px solid #cbd5e1;
+            background: #ffffff;
+        }
 
-        .accordion-toggle-all {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
+        .accordion-toggle-all {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
 
-        .toggle-btn {
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            padding: 3px 8px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            color: #334155;
-        }
+        .toggle-btn {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #334155;
+        }
 
-        .toggle-btn:hover { background: #cbd5e1; }
+        .toggle-btn:hover { background: #cbd5e1; }
 
-        /* Modal Darcha */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
+        /* Modal Darcha */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
 
-        .modal-card {
-            background: white;
-            padding: 20px 24px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
+        .modal-card {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
 
-        .modal-card h3 { font-size: 16px; color: #0f172a; margin-bottom: 12px; }
-        .modal-card p { font-size: 14px; color: #475569; margin-bottom: 16px; }
+        .modal-card h3 { font-size: 16px; color: #0f172a; margin-bottom: 12px; }
+        .modal-card p { font-size: 14px; color: #475569; margin-bottom: 16px; }
 
-        .modal-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-        .modal-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 13px;
-        }
+        .modal-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+        }
 
-        .btn-yes { background-color: #10b981; color: white; }
-        .btn-yes:hover { background-color: #059669; }
-        .btn-edit { background-color: #f59e0b; color: white; }
-        .btn-edit:hover { background-color: #d97706; }
-        .btn-no { background-color: #64748b; color: white; }
-        .btn-no:hover { background-color: #475569; }
+        .btn-yes { background-color: #10b981; color: white; }
+        .btn-yes:hover { background-color: #059669; }
+        .btn-edit { background-color: #f59e0b; color: white; }
+        .btn-edit:hover { background-color: #d97706; }
+        .btn-no { background-color: #64748b; color: white; }
+        .btn-no:hover { background-color: #475569; }
 
-        .edit-history-list {
-            margin-top: 15px;
-            text-align: left;
-            max-height: 180px;
-            overflow-y: auto;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
-        }
+        .edit-history-list {
+            margin-top: 15px;
+            text-align: left;
+            max-height: 180px;
+            overflow-y: auto;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+        }
 
-        .edit-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            padding: 6px 0;
-            border-bottom: 1px dashed #e2e8f0;
-        }
+        .edit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
 
-        .btn-delete-log {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 2px 8px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .btn-delete-log:hover { background-color: #dc2626; }
+        .btn-delete-log {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .btn-delete-log:hover { background-color: #dc2626; }
 
-        .latest-row { background-color: #dbeafe !important; font-weight: bold; }
-        .latest-badge {
-            background-color: #2563eb;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            margin-left: 4px;
-        }
+        .latest-row { background-color: #dbeafe !important; font-weight: bold; }
+        .latest-badge {
+            background-color: #2563eb;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
 
-        .login-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 14px;
-            outline: none;
-        }
+        .login-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
 
-        .login-input:focus { border-color: #2563eb; }
-        .error-msg { color: #ef4444; font-size: 12px; margin-bottom: 10px; display: none; }
-    </style>
+        .login-input:focus { border-color: #2563eb; }
+        .error-msg { color: #ef4444; font-size: 12px; margin-bottom: 10px; display: none; }
+    </style>
 </head>
 <body>
 
-    <!-- USER BAR -->
-    <div class="user-bar" id="user-bar" style="display: none;">
-        <span class="user-info">👤 Xodim: <strong id="current-user-display">---</strong></span>
-        <button class="logout-btn" onclick="logout()">Chiqish</button>
-    </div>
+    <!-- USER BAR -->
+    <div class="user-bar" id="user-bar" style="display: none;">
+        <span class="user-info">👤 Xodim: <strong id="current-user-display">---</strong></span>
+        <button class="logout-btn" onclick="logout()">Chiqish</button>
+    </div>
 
-    <h1>JM Poyezd Tormoz Kolodkalari Nazorati</h1>
-    <p class="subtitle">6 ta poyezd (CT/CI - Chap, OI/OT - O'ng)</p>
+    <h1>JM Poyezd Tormoz Kolodkalari Nazorati</h1>
+    <p class="subtitle">6 ta poyezd (CT/CI - Chap, OI/OT - O'ng)</p>
 
-    <!-- POYEZD TANLASH TUGMALARI -->
-    <div class="train-selector-container">
-        <span class="train-selector-label">🚆 Poyezd №:</span>
-        <div class="train-buttons">
-            <button class="train-btn active" data-train="01" onclick="selectTrain('01')">01</button>
-            <button class="train-btn" data-train="02" onclick="selectTrain('02')">02</button>
-            <button class="train-btn" data-train="03" onclick="selectTrain('03')">03</button>
-            <button class="train-btn" data-train="04" onclick="selectTrain('04')">04</button>
-            <button class="train-btn" data-train="05" onclick="selectTrain('05')">05</button>
-            <button class="train-btn" data-train="06" onclick="selectTrain('06')">06</button>
-        </div>
-    </div>
+    <!-- POYEZD TANLASH TUGMALARI -->
+    <div class="train-selector-container">
+        <span class="train-selector-label">🚆 Poyezd №:</span>
+        <div class="train-buttons">
+            <button class="train-btn active" data-train="01" onclick="selectTrain('01')">01</button>
+            <button class="train-btn" data-train="02" onclick="selectTrain('02')">02</button>
+            <button class="train-btn" data-train="03" onclick="selectTrain('03')">03</button>
+            <button class="train-btn" data-train="04" onclick="selectTrain('04')">04</button>
+            <button class="train-btn" data-train="05" onclick="selectTrain('05')">05</button>
+            <button class="train-btn" data-train="06" onclick="selectTrain('06')">06</button>
+        </div>
+    </div>
 
-    <!-- VAGON TUGMALARI -->
-    <div class="wagon-selector">
-        <button class="wagon-btn active" data-wagon="TC1" onclick="selectWagon('TC1')">TC1</button>
-        <button class="wagon-btn" data-wagon="2" onclick="selectWagon('2')">2-vagon</button>
-        <button class="wagon-btn" data-wagon="3" onclick="selectWagon('3')">3-vagon</button>
-        <button class="wagon-btn" data-wagon="4" onclick="selectWagon('4')">4-vagon</button>
-        <button class="wagon-btn" data-wagon="5" onclick="selectWagon('5')">5-vagon</button>
-        <button class="wagon-btn" data-wagon="6" onclick="selectWagon('6')">6-vagon</button>
-        <button class="wagon-btn" data-wagon="TC2" onclick="selectWagon('TC2')">TC2</button>
-    </div>
+    <!-- VAGON TUGMALARI -->
+    <div class="wagon-selector">
+        <button class="wagon-btn active" data-wagon="TC1" onclick="selectWagon('TC1')">TC1</button>
+        <button class="wagon-btn" data-wagon="2" onclick="selectWagon('2')">2-vagon</button>
+        <button class="wagon-btn" data-wagon="3" onclick="selectWagon('3')">3-vagon</button>
+        <button class="wagon-btn" data-wagon="4" onclick="selectWagon('4')">4-vagon</button>
+        <button class="wagon-btn" data-wagon="5" onclick="selectWagon('5')">5-vagon</button>
+        <button class="wagon-btn" data-wagon="6" onclick="selectWagon('6')">6-vagon</button>
+        <button class="wagon-btn" data-wagon="TC2" onclick="selectWagon('TC2')">TC2</button>
+    </div>
 
-    <!-- TEPADAGI YO'NALISH KO'RSATKICHI -->
-    <div class="direction-banner" id="dir-top">⬆️ TC1 vagon tomon</div>
+    <!-- TEPADAGI YO'NALISH KO'RSATKICHI -->
+    <div class="direction-banner" id="dir-top">⬆️ TC1 vagon tomon</div>
 
-    <!-- POYEZD KORPUSI -->
-    <div class="train-container nose-top" id="train-body">
-        <div class="current-wagon-title" id="wagon-title">Poyezd №01 | Vagon: TC1</div>
-        
-        <!-- 1-Aravacha -->
-        <div class="bogie">
-            <span class="bogie-title" id="bogie-1-title">1-Aravacha</span>
-            
-            <!-- 1-O'q -->
-            <div class="wheel-axle-group">
-                <div class="wheel-axle">
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(1, 'CT1')" id="pad-1">CT1</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(2, 'CI2')" id="pad-2">CI2</button>
-                    </div>
-                    <div class="axle"></div>
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(3, 'OI2')" id="pad-3">OI2</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(4, 'OT1')" id="pad-4">OT1</button>
-                    </div>
-                </div>
-            </div>
+    <!-- POYEZD KORPUSI -->
+    <div class="train-container nose-top" id="train-body">
+        <div class="current-wagon-title" id="wagon-title">Poyezd №01 | Vagon: TC1</div>
+        
+        <!-- 1-Aravacha -->
+        <div class="bogie">
+            <span class="bogie-title" id="bogie-1-title">1-Aravacha</span>
+            
+            <!-- 1-O'q -->
+            <div class="wheel-axle-group">
+                <div class="wheel-axle">
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(1, 'CT1')" id="pad-1">CT1</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(2, 'CI2')" id="pad-2">CI2</button>
+                    </div>
+                    <div class="axle"></div>
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(3, 'OI2')" id="pad-3">OI2</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(4, 'OT1')" id="pad-4">OT1</button>
+                    </div>
+                </div>
+            </div>
 
-            <!-- 2-O'q -->
-            <div class="wheel-axle-group">
-                <div class="wheel-axle">
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(5, 'CT3')" id="pad-5">CT3</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(6, 'CI4')" id="pad-6">CI4</button>
-                    </div>
-                    <div class="axle"></div>
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(7, 'OI4')" id="pad-7">OI4</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(8, 'OT3')" id="pad-8">OT3</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <!-- 2-O'q -->
+            <div class="wheel-axle-group">
+                <div class="wheel-axle">
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(5, 'CT3')" id="pad-5">CT3</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(6, 'CI4')" id="pad-6">CI4</button>
+                    </div>
+                    <div class="axle"></div>
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(7, 'OI4')" id="pad-7">OI4</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(8, 'OT3')" id="pad-8">OT3</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- 2-Aravacha -->
-        <div class="bogie">
-            <span class="bogie-title" id="bogie-2-title">2-Aravacha</span>
-            
-            <!-- 3-O'q -->
-            <div class="wheel-axle-group">
-                <div class="wheel-axle">
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(9, 'CT5')" id="pad-9">CT5</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(10, 'CI6')" id="pad-10">CI6</button>
-                    </div>
-                    <div class="axle"></div>
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(11, 'OI6')" id="pad-11">OI6</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(12, 'OT5')" id="pad-12">OT5</button>
-                    </div>
-                </div>
-            </div>
+        <!-- 2-Aravacha -->
+        <div class="bogie">
+            <span class="bogie-title" id="bogie-2-title">2-Aravacha</span>
+            
+            <!-- 3-O'q -->
+            <div class="wheel-axle-group">
+                <div class="wheel-axle">
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(9, 'CT5')" id="pad-9">CT5</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(10, 'CI6')" id="pad-10">CI6</button>
+                    </div>
+                    <div class="axle"></div>
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(11, 'OI6')" id="pad-11">OI6</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(12, 'OT5')" id="pad-12">OT5</button>
+                    </div>
+                </div>
+            </div>
 
-            <!-- 4-O'q -->
-            <div class="wheel-axle-group">
-                <div class="wheel-axle">
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(13, 'CT7')" id="pad-13">CT7</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(14, 'CI8')" id="pad-14">CI8</button>
-                    </div>
-                    <div class="axle"></div>
-                    <div class="wheel-side">
-                        <button class="pad-btn" onclick="openConfirmModal(15, 'OI8')" id="pad-15">OI8</button>
-                        <div class="wheel"></div>
-                        <button class="pad-btn" onclick="openConfirmModal(16, 'OT7')" id="pad-16">OT7</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            <!-- 4-O'q -->
+            <div class="wheel-axle-group">
+                <div class="wheel-axle">
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(13, 'CT7')" id="pad-13">CT7</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(14, 'CI8')" id="pad-14">CI8</button>
+                    </div>
+                    <div class="axle"></div>
+                    <div class="wheel-side">
+                        <button class="pad-btn" onclick="openConfirmModal(15, 'OI8')" id="pad-15">OI8</button>
+                        <div class="wheel"></div>
+                        <button class="pad-btn" onclick="openConfirmModal(16, 'OT7')" id="pad-16">OT7</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- PASTDAGI YO'NALISH KO'RSATKICHI -->
-    <div class="direction-banner" id="dir-bottom">⬇️ TC2 vagon tomon</div>
+    <!-- PASTDAGI YO'NALISH KO'RSATKICHI -->
+    <div class="direction-banner" id="dir-bottom">⬇️ TC2 vagon tomon</div>
 
-    <!-- BOSHQARUV PANEL -->
-    <div class="panel">
-        <div class="legend">
-            <div class="legend-item">
-                <div class="color-box status-blue"></div>
-                <span>Yangi</span>
-            </div>
-            <div class="legend-item">
-                <div class="color-box status-red"></div>
-                <span>Almashmagan</span>
-            </div>
-        </div>
+    <!-- BOSHQARUV PANEL -->
+    <div class="panel">
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box status-blue"></div>
+                <span>Yangi</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box status-red"></div>
+                <span>Almashmagan</span>
+            </div>
+        </div>
 
-        <div class="button-group">
-            <button class="report-btn" onclick="fetchSummaryReport()">Almashtirishlar Tarixi</button>
-            <button class="report-btn excel-btn" onclick="downloadExcelReport()">📥 Excel Hisobotni Yuklash</button>
-        </div>
+        <div class="button-group">
+            <button class="report-btn" onclick="fetchSummaryReport()">Almashtirishlar Tarixi</button>
+            <button class="report-btn excel-btn" onclick="downloadExcelReport()">📥 Excel Hisobotni Yuklash</button>
+        </div>
 
-        <div id="report-output"></div>
-    </div>
+        <div id="report-output"></div>
+    </div>
 
-    <!-- LOGIN & PAROL MODALI -->
-    <div class="modal-overlay" id="auth-modal" style="display: flex;">
-        <div class="modal-card">
-            <h3>Tizimga Kirish</h3>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Davom etish uchun ismingiz va parolni kiriting</p>
-            <input type="text" id="username-input" class="login-input" placeholder="Login / Ismingiz" autocomplete="off">
-            <input type="password" id="password-input" class="login-input" placeholder="Parol">
-            <div class="error-msg" id="auth-error">Parol noto'g'ri!</div>
-            <button class="report-btn" onclick="login()">Kirish</button>
-        </div>
-    </div>
+    <!-- LOGIN & PAROL MODALI -->
+    <div class="modal-overlay" id="auth-modal" style="display: flex;">
+        <div class="modal-card">
+            <h3>Tizimga Kirish</h3>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Davom etish uchun ismingiz va parolni kiriting</p>
+            <input type="text" id="username-input" class="login-input" placeholder="Login / Ismingiz" autocomplete="off">
+            <input type="password" id="password-input" class="login-input" placeholder="Parol">
+            <div class="error-msg" id="auth-error">Parol noto'g'ri!</div>
+            <button class="report-btn" onclick="login()">Kirish</button>
+        </div>
+    </div>
 
-    <!-- SO'ROV MODAL DARCHASI -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-card">
-            <h3>Tasdiqlash va Tahrirlash</h3>
-            <p id="modal-text">Kolodkani almashtirdingizmi?</p>
-            <div class="modal-actions">
-                <button class="modal-btn btn-yes" onclick="confirmReplacement()">Ha</button>
-                <button class="modal-btn btn-edit" onclick="toggleEditList()">Tahrirlash</button>
-                <button class="modal-btn btn-no" onclick="closeConfirmModal()">Yopish</button>
-            </div>
-            <div class="edit-history-list" id="edit-list-container" style="display: none;">
-                <strong style="font-size: 12px; color: #1e293b;">Oxirgi 2 kunlik o'zgarishlar:</strong>
-                <div id="edit-list-items"></div>
-            </div>
-        </div>
-    </div>
+    <!-- SO'ROV MODAL DARCHASI -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-card">
+            <h3>Tasdiqlash va Tahrirlash</h3>
+            <p id="modal-text">Kolodkani almashtirdingizmi?</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-yes" onclick="confirmReplacement()">Ha</button>
+                <button class="modal-btn btn-edit" onclick="toggleEditList()">Tahrirlash</button>
+                <button class="modal-btn btn-no" onclick="closeConfirmModal()">Yopish</button>
+            </div>
+            <div class="edit-history-list" id="edit-list-container" style="display: none;">
+                <strong style="font-size: 12px; color: #1e293b;">Oxirgi 2 kunlik o'zgarishlar:</strong>
+                <div id="edit-list-items"></div>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        const API_URL = "https://jm-tormoz-backend.vercel.app/";
-        const CORRECT_PASSWORD = "12345";
-        const trainList = ['01', '02', '03', '04', '05', '06'];
-        const wagons = ['TC1', '2', '3', '4', '5', '6', 'TC2'];
-        
-        const padNames = {
-            1: 'CT1', 2: 'CI2', 3: 'OI2', 4: 'OT1',
-            5: 'CT3', 6: 'CI4', 7: 'OI4', 8: 'OT3',
-            9: 'CT5', 10: 'CI6', 11: 'OI6', 12: 'OT5',
-            13: 'CT7', 14: 'CI8', 15: 'OI8', 16: 'OT7'
-        };
+    <script>
+        const API_URL = "https://jm-tormoz.onrender.com";
+        const CORRECT_PASSWORD = "12345";
+        const trainList = ['01', '02', '03', '04', '05', '06'];
+        const wagons = ['TC1', '2', '3', '4', '5', '6', 'TC2'];
+        
+        const padNames = {
+            1: 'CT1', 2: 'CI2', 3: 'OI2', 4: 'OT1',
+            5: 'CT3', 6: 'CI4', 7: 'OI4', 8: 'OT3',
+            9: 'CT5', 10: 'CI6', 11: 'OI6', 12: 'OT5',
+            13: 'CT7', 14: 'CI8', 15: 'OI8', 16: 'OT7'
+        };
 
-        let currentTrain = '01';
-        let currentWagon = 'TC1';
-        let selectedPadId = null;
-        let selectedPadCode = '';
-        let currentUser = localStorage.getItem('jm_username') || null;
+        let currentTrain = '01';
+        let currentWagon = 'TC1';
+        let selectedPadId = null;
+        let selectedPadCode = '';
+        let currentUser = localStorage.getItem('jm_username') || null;
 
-        const bogieMapping = {
-            'TC1': [1, 2], '2': [3, 4], '3': [5, 6],
-            '4': [7, 8], '5': [9, 10], '6': [11, 12], 'TC2': [13, 14]
-        };
+        const bogieMapping = {
+            'TC1': [1, 2], '2': [3, 4], '3': [5, 6],
+            '4': [7, 8], '5': [9, 10], '6': [11, 12], 'TC2': [13, 14]
+        };
 
-        let trainData = {};
-        let replacementLogs = [];
+        let trainData = {};
+        let replacementLogs = [];
 
-        trainList.forEach(t => {
-            trainData[t] = {};
-            wagons.forEach(w => {
-                trainData[t][w] = {};
-                for (let i = 1; i <= 16; i++) {
-                    trainData[t][w][i] = 0;
-                }
-            });
-        });
+        trainList.forEach(t => {
+            trainData[t] = {};
+            wagons.forEach(w => {
+                trainData[t][w] = {};
+                for (let i = 1; i <= 16; i++) {
+                    trainData[t][w][i] = 0;
+                }
+            });
+        });
 
-        /* LOGIN VA AUTH */
-        function checkAuth() {
-            if (currentUser) {
-                document.getElementById('auth-modal').style.display = 'none';
-                document.getElementById('user-bar').style.display = 'flex';
-                document.getElementById('current-user-display').innerText = currentUser;
-                initApp();
-            } else {
-                document.getElementById('auth-modal').style.display = 'flex';
-                document.getElementById('user-bar').style.display = 'none';
-            }
-        }
+        /* LOGIN VA AUTH */
+        function checkAuth() {
+            if (currentUser) {
+                document.getElementById('auth-modal').style.display = 'none';
+                document.getElementById('user-bar').style.display = 'flex';
+                document.getElementById('current-user-display').innerText = currentUser;
+                initApp();
+            } else {
+                document.getElementById('auth-modal').style.display = 'flex';
+                document.getElementById('user-bar').style.display = 'none';
+            }
+        }
 
-        function login() {
-            const username = document.getElementById('username-input').value.trim();
-            const password = document.getElementById('password-input').value;
-            const errorDiv = document.getElementById('auth-error');
+        function login() {
+            const username = document.getElementById('username-input').value.trim();
+            const password = document.getElementById('password-input').value;
+            const errorDiv = document.getElementById('auth-error');
 
-            if (!username) {
-                errorDiv.innerText = "Iltimos, loginingizni kiriting!";
-                errorDiv.style.display = 'block';
-                return;
-            }
+            if (!username) {
+                errorDiv.innerText = "Iltimos, loginingizni kiriting!";
+                errorDiv.style.display = 'block';
+                return;
+            }
 
-            if (password === CORRECT_PASSWORD) {
-                currentUser = username;
-                localStorage.setItem('jm_username', currentUser);
-                errorDiv.style.display = 'none';
-                checkAuth();
-            } else {
-                errorDiv.innerText = "Parol noto'g'ri!";
-                errorDiv.style.display = 'block';
-            }
-        }
+            if (password === CORRECT_PASSWORD) {
+                currentUser = username;
+                localStorage.setItem('jm_username', currentUser);
+                errorDiv.style.display = 'none';
+                checkAuth();
+            } else {
+                errorDiv.innerText = "Parol noto'g'ri!";
+                errorDiv.style.display = 'block';
+            }
+        }
 
-        function logout() {
-            localStorage.removeItem('jm_username');
-            currentUser = null;
-            location.reload();
-        }
+        function logout() {
+            localStorage.removeItem('jm_username');
+            currentUser = null;
+            location.reload();
+        }
 
-        /* DATA FETCHING */
-        async function loadPadsData() {
-            try {
-                const res = await fetch(`${API_URL}/api/pads`);
-                if (res.ok) {
-                    const data = await res.json();
-                    data.forEach(item => {
-                        const trainNum = item.train_number || '01';
-                        if (trainData[trainNum] && trainData[trainNum][item.wagon_code]) {
-                            trainData[trainNum][item.wagon_code][item.pad_index] = item.days_used;
-                        }
-                    });
-                    updateUI();
-                }
-            } catch (err) {
-                console.error("API ga ulanishda xatolik:", err);
-            }
-        }
+        /* DATA FETCHING */
+        async function loadPadsData() {
+            try {
+                const res = await fetch(`${API_URL}/api/pads`);
+                if (res.ok) {
+                    const data = await res.json();
+                    data.forEach(item => {
+                        const trainNum = item.train_number || '01';
+                        if (trainData[trainNum] && trainData[trainNum][item.wagon_code]) {
+                            trainData[trainNum][item.wagon_code][item.pad_index] = item.days_used;
+                        }
+                    });
+                    updateUI();
+                }
+            } catch (err) {
+                console.error("API ga ulanishda xatolik:", err);
+            }
+        }
 
-        async function loadLogsData() {
-            try {
-                const res = await fetch(`${API_URL}/api/logs`);
-                if (res.ok) {
-                    const data = await res.json();
-                    replacementLogs = data.map(item => ({
-                        id: item.id || item._id,
-                        train: item.train_number || '01',
-                        wagon: item.wagon_code,
-                        bogie: item.bogie_number,
-                        pad: item.pad_index,
-                        padCode: padNames[item.pad_index] || `K${item.pad_index}`,
-                        user: item.user_name || 'Noma\'lum',
-                        timestamp: new Date(item.created_at)
-                    }));
-                }
-            } catch (err) {
-                console.error("Loglarni yuklashda xatolik:", err);
-            }
-        }
+        async function loadLogsData() {
+            try {
+                const res = await fetch(`${API_URL}/api/logs`);
+                if (res.ok) {
+                    const data = await res.json();
+                    replacementLogs = data.map(item => ({
+                        id: item.id || item._id,
+                        train: item.train_number || '01',
+                        wagon: item.wagon_code,
+                        bogie: item.bogie_number,
+                        pad: item.pad_index,
+                        padCode: padNames[item.pad_index] || `K${item.pad_index}`,
+                        user: item.user_name || 'Noma\'lum',
+                        timestamp: new Date(item.created_at)
+                    }));
+                }
+            } catch (err) {
+                console.error("Loglarni yuklashda xatolik:", err);
+            }
+        }
 
-        /* POYEZD VA VAGON SELEKTORLARI */
-        function selectTrain(trainNum) {
-            currentTrain = trainNum;
-            document.querySelectorAll('.train-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-train') === trainNum);
-            });
-            updateHeaderTitle();
-            updateUI();
-        }
+        /* POYEZD VA VAGON SELEKTORLARI */
+        function selectTrain(trainNum) {
+            currentTrain = trainNum;
+            document.querySelectorAll('.train-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-train') === trainNum);
+            });
+            updateHeaderTitle();
+            updateUI();
+        }
 
-        function selectWagon(wagonName) {
-            currentWagon = wagonName;
-            document.querySelectorAll('.wagon-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-wagon') === wagonName);
-            });
+        function selectWagon(wagonName) {
+            currentWagon = wagonName;
+            document.querySelectorAll('.wagon-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-wagon') === wagonName);
+            });
 
-            updateHeaderTitle();
+            updateHeaderTitle();
 
-            const bogies = bogieMapping[wagonName];
-            document.getElementById('bogie-1-title').innerText = `${bogies[0]}-Aravacha`;
-            document.getElementById('bogie-2-title').innerText = `${bogies[1]}-Aravacha`;
+            const bogies = bogieMapping[wagonName];
+            document.getElementById('bogie-1-title').innerText = `${bogies[0]}-Aravacha`;
+            document.getElementById('bogie-2-title').innerText = `${bogies[1]}-Aravacha`;
 
-            const trainBody = document.getElementById('train-body');
-            const dirTop = document.getElementById('dir-top');
-            const dirBottom = document.getElementById('dir-bottom');
+            const trainBody = document.getElementById('train-body');
+            const dirTop = document.getElementById('dir-top');
+            const dirBottom = document.getElementById('dir-bottom');
 
-            trainBody.classList.remove('nose-top', 'nose-bottom');
+            trainBody.classList.remove('nose-top', 'nose-bottom');
 
-            if (wagonName === 'TC1') {
-                trainBody.classList.add('nose-top');
-                dirTop.style.display = 'none';
-                dirBottom.style.display = 'block';
-                dirBottom.innerText = '⬇️ TC2 vagon tomon';
-            } else if (wagonName === 'TC2') {
-                trainBody.classList.add('nose-bottom');
-                dirTop.style.display = 'block';
-                dirTop.innerText = '⬆️ TC1 vagon tomon';
-                dirBottom.style.display = 'none';
-            } else {
-                dirTop.style.display = 'block';
-                dirTop.innerText = '⬆️ TC1 vagon tomon';
-                dirBottom.style.display = 'block';
-                dirBottom.innerText = '⬇️ TC2 vagon tomon';
-            }
+            if (wagonName === 'TC1') {
+                trainBody.classList.add('nose-top');
+                dirTop.style.display = 'none';
+                dirBottom.style.display = 'block';
+                dirBottom.innerText = '⬇️ TC2 vagon tomon';
+            } else if (wagonName === 'TC2') {
+                trainBody.classList.add('nose-bottom');
+                dirTop.style.display = 'block';
+                dirTop.innerText = '⬆️ TC1 vagon tomon';
+                dirBottom.style.display = 'none';
+            } else {
+                dirTop.style.display = 'block';
+                dirTop.innerText = '⬆️ TC1 vagon tomon';
+                dirBottom.style.display = 'block';
+                dirBottom.innerText = '⬇️ TC2 vagon tomon';
+            }
 
-            updateUI();
-        }
+            updateUI();
+        }
 
-        function updateHeaderTitle() {
-            const wagonLabel = (currentWagon === 'TC1' || currentWagon === 'TC2') ? currentWagon : `${currentWagon}-vagon`;
-            document.getElementById('wagon-title').innerText = `Poyezd №${currentTrain} | Vagon: ${wagonLabel}`;
-        }
+        function updateHeaderTitle() {
+            const wagonLabel = (currentWagon === 'TC1' || currentWagon === 'TC2') ? currentWagon : `${currentWagon}-vagon`;
+            document.getElementById('wagon-title').innerText = `Poyezd №${currentTrain} | Vagon: ${wagonLabel}`;
+        }
 
-        function updateUI() {
-            const wagonPads = trainData[currentTrain][currentWagon];
-            for (let id = 1; id <= 16; id++) {
-                const days = wagonPads[id] || 0;
-                const btn = document.getElementById(`pad-${id}`);
-                
-                btn.className = 'pad-btn';
-                if (days <= 30) {
-                    btn.classList.add('status-blue');
-                } else if (days <= 60) {
-                    btn.classList.add('status-yellow');
-                } else {
-                    btn.classList.add('status-red');
-                }
-            }
-        }
+        function updateUI() {
+            const wagonPads = trainData[currentTrain][currentWagon];
+            for (let id = 1; id <= 16; id++) {
+                const days = wagonPads[id] || 0;
+                const btn = document.getElementById(`pad-${id}`);
+                
+                btn.className = 'pad-btn';
+                if (days <= 30) {
+                    btn.classList.add('status-blue');
+                } else if (days <= 60) {
+                    btn.classList.add('status-yellow');
+                } else {
+                    btn.classList.add('status-red');
+                }
+            }
+        }
 
-        /* MODAL VA TAHRIRLASH */
-        function openConfirmModal(padId, padCode) {
-            selectedPadId = padId;
-            selectedPadCode = padCode;
-            const wagonLabel = (currentWagon === 'TC1' || currentWagon === 'TC2') ? currentWagon : `${currentWagon}-vagon`;
-            const bogies = bogieMapping[currentWagon];
-            const bogieNum = padId <= 8 ? bogies[0] : bogies[1];
+        /* MODAL VA TAHRIRLASH */
+        function openConfirmModal(padId, padCode) {
+            selectedPadId = padId;
+            selectedPadCode = padCode;
+            const wagonLabel = (currentWagon === 'TC1' || currentWagon === 'TC2') ? currentWagon : `${currentWagon}-vagon`;
+            const bogies = bogieMapping[currentWagon];
+            const bogieNum = padId <= 8 ? bogies[0] : bogies[1];
 
-            document.getElementById('modal-text').innerText = `Poyezd №${currentTrain}, ${wagonLabel} (${bogieNum}-Aravacha) ${padCode} kolodkasini almashtirdingizmi?`;
-            document.getElementById('edit-list-container').style.display = 'none';
-            document.getElementById('confirm-modal').style.display = 'flex';
-        }
+            document.getElementById('modal-text').innerText = `Poyezd №${currentTrain}, ${wagonLabel} (${bogieNum}-Aravacha) ${padCode} kolodkasini almashtirdingizmi?`;
+            document.getElementById('edit-list-container').style.display = 'none';
+            document.getElementById('confirm-modal').style.display = 'flex';
+        }
 
-        function closeConfirmModal() {
-            selectedPadId = null;
-            selectedPadCode = '';
-            document.getElementById('confirm-modal').style.display = 'none';
-        }
+        function closeConfirmModal() {
+            selectedPadId = null;
+            selectedPadCode = '';
+            document.getElementById('confirm-modal').style.display = 'none';
+        }
 
-        async function confirmReplacement() {
-            if (selectedPadId !== null) {
-                const bogies = bogieMapping[currentWagon];
-                const bogieNum = selectedPadId <= 8 ? bogies[0] : bogies[1];
+        async function confirmReplacement() {
+            if (selectedPadId !== null) {
+                const bogies = bogieMapping[currentWagon];
+                const bogieNum = selectedPadId <= 8 ? bogies[0] : bogies[1];
 
-                try {
-                    const res = await fetch(`${API_URL}/api/replace`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            train_number: currentTrain,
-                            wagon_code: currentWagon,
-                            bogie_number: bogieNum,
-                            pad_index: selectedPadId,
-                            user_name: currentUser || 'Anonim'
-                        })
-                    });
+                try {
+                    const res = await fetch(`${API_URL}/api/replace`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            train_number: currentTrain,
+                            wagon_code: currentWagon,
+                            bogie_number: bogieNum,
+                            pad_index: selectedPadId,
+                            user_name: currentUser || 'Anonim'
+                        })
+                    });
 
-                    if (res.ok) {
-                        trainData[currentTrain][currentWagon][selectedPadId] = 0;
-                        await loadLogsData();
-                        updateUI();
-                        closeConfirmModal();
-                    } else {
-                        alert("Xatolik yuz berdi. Backend bilan aloqani tekshiring!");
-                    }
-                } catch (err) {
-                    console.error("Almashtirish jarayonida xatolik:", err);
-                }
-            }
-        }
+                    if (res.ok) {
+                        trainData[currentTrain][currentWagon][selectedPadId] = 0;
+                        await loadLogsData();
+                        updateUI();
+                        closeConfirmModal();
+                    } else {
+                        alert("Xatolik yuz berdi. Backend bilan aloqani tekshiring!");
+                    }
+                } catch (err) {
+                    console.error("Almashtirish jarayonida xatolik:", err);
+                }
+            }
+        }
 
-        function toggleEditList() {
-            const container = document.getElementById('edit-list-container');
-            const itemsDiv = document.getElementById('edit-list-items');
-
-            if (container.style.display === 'block') {
-                container.style.display = 'none';
-                return;
-            }
-
-            const twoDaysAgo = new Date(Date.now() - (2 * 24 * 60 * 60 * 1000));
-            const recentLogs = replacementLogs.filter(log => log.train === currentTrain && log.timestamp >= twoDaysAgo);
-
-            if (recentLogs.length === 0) {
-                itemsDiv.innerHTML = `<p style="font-size:11px; color:#64748b; margin-top:5px;">Poyezd №${currentTrain} uchun oxirgi 2 kunda o'zgarishlar kiritilmagan.</p>`;
-            } else {
-                let html = '';
-                recentLogs.slice().reverse().forEach(log => {
-                    const timeStr = log.timestamp.toLocaleString('uz-UZ', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    const wagonStr = (log.wagon === 'TC1' || log.wagon === 'TC2') ? log.wagon : `${log.wagon}-vag`;
-                    html += `
-                        <div class="edit-item">
-                            <span><b>${wagonStr}</b> (${log.bogie}-Arav) ${log.padCode} [👤${log.user}] - <small>${timeStr}</small></span>
-                            <button class="btn-delete-log" onclick="deleteLog(${log.id})">O'chirish</button>
-                        </div>
-                    `;
-                });
-                itemsDiv.innerHTML = html;
-            }
-            container.style.display = 'block';
-        }
-
-        async function deleteLog(logId) {
-            if (!logId) return;
-            try {
-                const res = await fetch(`${API_URL}/api/logs/${logId}`, { method: 'DELETE' });
-                if (res.ok) {
-                    await loadPadsData();
-                    await loadLogsData();
-                    toggleEditList();
-                } else {
-                    const errorData = await res.json();
-                    alert(`Xatolik: ${JSON.stringify(errorData.detail)}`);
-                }
-            } catch (err) {
-                console.error("O'chirishda xatolik:", err);
-            }
-        }
-
-        /* YASHIRILADIGAN VAGON TARIXI HISOBOTI */
-        async function fetchSummaryReport() {
-            await loadLogsData();
-            const output = document.getElementById('report-output');
-
-            const currentTrainLogs = replacementLogs.filter(l => l.train === currentTrain);
-
-            if (currentTrainLogs.length === 0) {
-                output.innerHTML = `<b>Poyezd №${currentTrain} bo'yicha almashtirishlar tarixi mavjud emas.</b>`;
-                output.style.display = 'block';
-                return;
-            }
-
-            const maxTimestamp = Math.max(...currentTrainLogs.map(l => l.timestamp.getTime()));
-            const latestDateStr = new Date(maxTimestamp).toISOString().split('T')[0];
-
-            let html = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <strong style="font-size:14px; color:#1e293b;">🚆 Poyezd №${currentTrain} - Almashtirish Tarixi:</strong>
-                </div>
-                <div class="accordion-toggle-all">
-                    <button class="toggle-btn" onclick="setAllAccordions(true)">Barchasini ochish</button>
-                    <button class="toggle-btn" onclick="setAllAccordions(false)">Barchasini yopish</button>
-                </div>
-            `;
-            
-            wagons.forEach(wagonName => {
-                const wagonLabel = (wagonName === 'TC1' || wagonName === 'TC2') ? wagonName : `${wagonName}-vagon`;
-                const logsForWagon = currentTrainLogs.filter(l => l.wagon === wagonName);
-
-                html += `<details class="accordion-item" id="accordion-${wagonName}">
-                    <summary class="accordion-header">
-                        <span>🚃 ${wagonLabel}</span>
-                        <span style="font-size:11px; font-weight:normal; color:${logsForWagon.length > 0 ? '#2563eb' : '#94a3b8'};">
-                            ${logsForWagon.length > 0 ? `(${logsForWagon.length} ta almashtirish)` : "(Ma'lumot yo'q)"}
-                        </span>
-                    </summary>
-                    <div class="accordion-content">`;
-
-                if (logsForWagon.length === 0) {
-                    html += `<p style="font-size:12px; color:#94a3b8;">Ushbu vagonda almashtirishlar bo'lmagan.</p>`;
-                } else {
-                    html += `<table border="1" style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
-                        <thead>
-                            <tr style="background:#e2e8f0; color:#334155;">
-                                <th style="padding:4px 6px;">Aravacha</th>
-                                <th style="padding:4px 6px;">Kolodka</th>
-                                <th style="padding:4px 6px;">Xodim (Login)</th>
-                                <th style="padding:4px 6px;">Sana va Vaqt</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-                    
-                    logsForWagon.sort((a,b) => b.timestamp - a.timestamp).forEach(log => {
-                        const logDateStr = log.timestamp.toISOString().split('T')[0];
-                        const isLatestDate = logDateStr === latestDateStr;
-
-                        const rowClass = isLatestDate ? 'class="latest-row"' : '';
-                        const timeStr = log.timestamp.toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-                        
-                        const dateDisplay = isLatestDate 
-                            ? `<span style="color:#2563eb; font-weight:bold;">${timeStr}</span><span class="latest-badge">Yangi</span>`
-                            : `<span>${timeStr}</span>`;
-
-                        html += `<tr ${rowClass}>
-                            <td style="padding:4px 6px;">${log.bogie}-Aravacha</td>
-                            <td style="padding:4px 6px;"><b>${log.padCode}</b></td>
-                            <td style="padding:4px 6px; color:#0284c7; font-weight:bold;">👤 ${log.user}</td>
-                            <td style="padding:4px 6px;">${dateDisplay}</td>
-                        </tr>`;
-                    });
-
-                    html += `</tbody></table>`;
-                }
-                html += `</div></details>`;
-            });
-
-            output.innerHTML = html;
-            output.style.display = 'block';
-        }
-
-        function setAllAccordions(isOpen) {
-            document.querySelectorAll('#report-output details.accordion-item').forEach(el => {
-                el.open = isOpen;
-            });
-        }
-
-        function downloadExcelReport() {
-            window.location.href = `${API_URL}/report/export-excel?train=${currentTrain}`;
-        }
-
-        async function initApp() {
-            await loadPadsData();
-            await loadLogsData();
-            selectTrain('01');
-            selectWagon('TC1');
-        }
-
-        checkAuth();
-    </script>
-</body>
-</html>
+      
