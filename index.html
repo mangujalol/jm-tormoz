@@ -58,14 +58,12 @@
             color: #1a365d;
             margin-bottom: 6px;
             font-size: 24px;
-            text-align: center;
         }
 
         p.subtitle {
             color: #64748b;
             margin-bottom: 15px;
             font-size: 14px;
-            text-align: center;
         }
 
         /* Poyezd Tanlash Bloki */
@@ -81,8 +79,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             flex-wrap: wrap;
             justify-content: center;
-            width: 100%;
-            max-width: 520px;
         }
 
         .train-selector-label {
@@ -125,8 +121,6 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
-            width: 100%;
-            max-width: 520px;
         }
 
         .wagon-btn {
@@ -293,6 +287,7 @@
         }
 
         .status-blue { background-color: #2563eb; color: white; }
+        .status-yellow { background-color: #eab308; color: #1e293b; }
         .status-red { background-color: #ef4444; color: white; }
 
         /* Controls & Report */
@@ -359,9 +354,61 @@
             font-size: 13px;
             line-height: 1.5;
             display: none;
-            max-height: 300px;
-            overflow-y: auto;
+            overflow-x: auto;
         }
+
+        /* ACCORDION STILI */
+        .accordion-item {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 10px 14px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #1d4ed8;
+            cursor: pointer;
+            background: #f1f5f9;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: #e2e8f0;
+        }
+
+        .accordion-content {
+            padding: 10px;
+            border-top: 1px solid #cbd5e1;
+            background: #ffffff;
+        }
+
+        .accordion-toggle-all {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .toggle-btn {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #334155;
+        }
+
+        .toggle-btn:hover { background: #cbd5e1; }
 
         /* Modal Darcha */
         .modal-overlay {
@@ -382,7 +429,7 @@
             padding: 20px 24px;
             border-radius: 12px;
             width: 90%;
-            max-width: 440px;
+            max-width: 420px;
             text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
@@ -418,38 +465,41 @@
         .edit-history-list {
             margin-top: 15px;
             text-align: left;
-            max-height: 220px;
+            max-height: 180px;
             overflow-y: auto;
             border-top: 1px solid #e2e8f0;
             padding-top: 10px;
         }
 
-        .history-wagon-group {
-            margin-bottom: 8px;
+        .edit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
         }
 
-        .history-wagon-title {
-            font-weight: 700;
-            color: #1d4ed8;
-            cursor: pointer;
-            padding: 3px 6px;
-            background: #eff6ff;
+        .btn-delete-log {
+            background-color: #ef4444;
+            color: white;
+            border: none;
             border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 3px;
-        }
-
-        .history-wagon-title:hover {
-            background: #dbeafe;
-        }
-
-        .history-item-row {
-            padding-left: 10px;
+            padding: 2px 8px;
+            cursor: pointer;
             font-size: 11px;
-            color: #475569;
-            border-left: 2px solid #bfdbfe;
-            margin-bottom: 3px;
+            font-weight: bold;
+        }
+        .btn-delete-log:hover { background-color: #dc2626; }
+
+        .latest-row { background-color: #dbeafe !important; font-weight: bold; }
+        .latest-badge {
+            background-color: #2563eb;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 4px;
         }
 
         .login-input {
@@ -595,11 +645,11 @@
         <div class="legend">
             <div class="legend-item">
                 <div class="color-box status-blue"></div>
-                <span>Yangi</span>
+                <span>Almashmagan</span>
             </div>
             <div class="legend-item">
                 <div class="color-box status-red"></div>
-                <span>Eski</span>
+                <span>Almashmagan</span>
             </div>
         </div>
 
@@ -634,7 +684,7 @@
                 <button class="modal-btn btn-no" onclick="closeConfirmModal()">Yopish</button>
             </div>
             <div class="edit-history-list" id="edit-list-container" style="display: none;">
-                <strong style="font-size: 12px; color: #1e293b; display: block; margin-bottom: 5px;">Vagonlar bo'yicha tarix:</strong>
+                <strong style="font-size: 12px; color: #1e293b;">Oxirgi 2 kunlik o'zgarishlar:</strong>
                 <div id="edit-list-items"></div>
             </div>
         </div>
@@ -676,15 +726,6 @@
                 }
             });
         });
-
-        window.onload = function() {
-            checkAuth();
-        };
-
-        function initApp() {
-            loadPadsData();
-            loadLogsData();
-        }
 
         /* LOGIN VA AUTH */
         function checkAuth() {
@@ -829,6 +870,8 @@
                 btn.className = 'pad-btn';
                 if (days <= 30) {
                     btn.classList.add('status-blue');
+                } else if (days <= 60) {
+                    btn.classList.add('status-yellow');
                 } else {
                     btn.classList.add('status-red');
                 }
@@ -852,55 +895,6 @@
             selectedPadId = null;
             selectedPadCode = '';
             document.getElementById('confirm-modal').style.display = 'none';
-        }
-
-        function toggleEditList() {
-            const container = document.getElementById('edit-list-container');
-            const itemsContainer = document.getElementById('edit-list-items');
-            
-            if (container.style.display === 'none') {
-                container.style.display = 'block';
-                renderGroupedLogs(itemsContainer);
-            } else {
-                container.style.display = 'none';
-            }
-        }
-
-        function renderGroupedLogs(targetContainer) {
-            targetContainer.innerHTML = '';
-            
-            // Faqat joriy tanlangan poyezdning loglarini olamiz
-            const trainLogs = replacementLogs.filter(log => log.train === currentTrain);
-
-            if (trainLogs.length === 0) {
-                targetContainer.innerHTML = '<div style="font-size:11px; color:#64748b; padding:4px 0;">Bu poyezdda tarix mavjud emas</div>';
-                return;
-            }
-
-            // Vagonlar tartibi bo'yicha guruhlaymiz
-            wagons.forEach(w => {
-                const wagonLogs = trainLogs.filter(log => log.wagon === w);
-                if (wagonLogs.length > 0) {
-                    const groupDiv = document.createElement('div');
-                    groupDiv.className = 'history-wagon-group';
-                    
-                    const wagonLabel = (w === 'TC1' || w === 'TC2') ? w : `${w}-vagon`;
-                    
-                    let html = `<span class="history-wagon-title" onclick="selectWagonFromHistory('${w}')">🚆 ${wagonLabel}</span>`;
-                    
-                    wagonLogs.forEach(log => {
-                        html += `<div class="history-item-row">• Kolodka: <b>${log.padCode}</b> — ${log.user} (${log.timestamp.toLocaleDateString()})</div>`;
-                    });
-                    
-                    groupDiv.innerHTML = html;
-                    targetContainer.appendChild(groupDiv);
-                }
-            });
-        }
-
-        function selectWagonFromHistory(wagonName) {
-            selectWagon(wagonName);
-            closeConfirmModal();
         }
 
         async function confirmReplacement() {
@@ -935,65 +929,153 @@
             }
         }
 
-        async function fetchSummaryReport() {
-            const output = document.getElementById('report-output');
-            if (output.style.display === 'block') {
-                output.style.display = 'none';
+        function toggleEditList() {
+            const container = document.getElementById('edit-list-container');
+            const itemsDiv = document.getElementById('edit-list-items');
+
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
                 return;
             }
 
-            await loadLogsData();
-            output.style.display = 'block';
-            
-            const trainLogs = replacementLogs.filter(log => log.train === currentTrain);
-            if (trainLogs.length === 0) {
-                output.innerHTML = `<b>Poyezd №${currentTrain} uchun almashtirishlar tarixi bo'sh.</b>`;
-                return;
-            }
+            const twoDaysAgo = new Date(Date.now() - (2 * 24 * 60 * 60 * 1000));
+            const recentLogs = replacementLogs.filter(log => log.train === currentTrain && log.timestamp >= twoDaysAgo);
 
-            let html = `<b>Poyezd №${currentTrain} bo'yicha almashtirishlar tarixi (ketma-ketlikda):</b><br><br>`;
-            
-            wagons.forEach(w => {
-                const wagonLogs = trainLogs.filter(log => log.wagon === w);
-                if (wagonLogs.length > 0) {
-                    const wagonLabel = (w === 'TC1' || w === 'TC2') ? w : `${w}-vagon`;
-                    html += `<div style="margin-bottom: 8px;">`;
-                    html += `<span style="font-weight: 700; color: #1d4ed8; cursor: pointer; background: #eff6ff; padding: 2px 6px; border-radius: 4px;" onclick="selectWagonAndHideReport('${w}')">🚆 ${wagonLabel}</span>`;
-                    html += `<ul style='margin-left: 20px; margin-top: 3px;'>`;
-                    wagonLogs.forEach(log => {
-                        html += `<li>Kolodka: <b>${log.padCode}</b> — Xodim: ${log.user} (${log.timestamp.toLocaleString()})</li>`;
-                    });
-                    html += `</ul></div>`;
+            if (recentLogs.length === 0) {
+                itemsDiv.innerHTML = `<p style="font-size:11px; color:#64748b; margin-top:5px;">Poyezd №${currentTrain} uchun oxirgi 2 kunda o'zgarishlar kiritilmagan.</p>`;
+            } else {
+                let html = '';
+                recentLogs.slice().reverse().forEach(log => {
+                    const timeStr = log.timestamp.toLocaleString('uz-UZ', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                    const wagonStr = (log.wagon === 'TC1' || log.wagon === 'TC2') ? log.wagon : `${log.wagon}-vag`;
+                    html += `
+                        <div class="edit-item">
+                            <span><b>${wagonStr}</b> (${log.bogie}-Arav) ${log.padCode} [👤${log.user}] - <small>${timeStr}</small></span>
+                            <button class="btn-delete-log" onclick="deleteLog(${log.id})">O'chirish</button>
+                        </div>
+                    `;
+                });
+                itemsDiv.innerHTML = html;
+            }
+            container.style.display = 'block';
+        }
+
+        async function deleteLog(logId) {
+            if (!logId) return;
+            try {
+                const res = await fetch(`${API_URL}/api/logs/${logId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await loadPadsData();
+                    await loadLogsData();
+                    toggleEditList();
+                } else {
+                    const errorData = await res.json();
+                    alert(`Xatolik: ${JSON.stringify(errorData.detail)}`);
                 }
+            } catch (err) {
+                console.error("O'chirishda xatolik:", err);
+            }
+        }
+
+        /* YASHIRILADIGAN VAGON TARIXI HISOBOTI */
+        async function fetchSummaryReport() {
+            await loadLogsData();
+            const output = document.getElementById('report-output');
+
+            const currentTrainLogs = replacementLogs.filter(l => l.train === currentTrain);
+
+            if (currentTrainLogs.length === 0) {
+                output.innerHTML = `<b>Poyezd №${currentTrain} bo'yicha almashtirishlar tarixi mavjud emas.</b>`;
+                output.style.display = 'block';
+                return;
+            }
+
+            const maxTimestamp = Math.max(...currentTrainLogs.map(l => l.timestamp.getTime()));
+            const latestDateStr = new Date(maxTimestamp).toISOString().split('T')[0];
+
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <strong style="font-size:14px; color:#1e293b;">🚆 Poyezd №${currentTrain} - Almashtirish Tarixi:</strong>
+                </div>
+                <div class="accordion-toggle-all">
+                    <button class="toggle-btn" onclick="setAllAccordions(true)">Barchasini ochish</button>
+                    <button class="toggle-btn" onclick="setAllAccordions(false)">Barchasini yopish</button>
+                </div>
+            `;
+            
+            wagons.forEach(wagonName => {
+                const wagonLabel = (wagonName === 'TC1' || wagonName === 'TC2') ? wagonName : `${wagonName}-vagon`;
+                const logsForWagon = currentTrainLogs.filter(l => l.wagon === wagonName);
+
+                html += `<details class="accordion-item" id="accordion-${wagonName}">
+                    <summary class="accordion-header">
+                        <span>🚃 ${wagonLabel}</span>
+                        <span style="font-size:11px; font-weight:normal; color:${logsForWagon.length > 0 ? '#2563eb' : '#94a3b8'};">
+                            ${logsForWagon.length > 0 ? `(${logsForWagon.length} ta almashtirish)` : "(Ma'lumot yo'q)"}
+                        </span>
+                    </summary>
+                    <div class="accordion-content">`;
+
+                if (logsForWagon.length === 0) {
+                    html += `<p style="font-size:12px; color:#94a3b8;">Ushbu vagonda almashtirishlar bo'lmagan.</p>`;
+                } else {
+                    html += `<table border="1" style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+                        <thead>
+                            <tr style="background:#e2e8f0; color:#334155;">
+                                <th style="padding:4px 6px;">Aravacha</th>
+                                <th style="padding:4px 6px;">Kolodka</th>
+                                <th style="padding:4px 6px;">Xodim (Login)</th>
+                                <th style="padding:4px 6px;">Sana va Vaqt</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                    
+                    logsForWagon.sort((a,b) => b.timestamp - a.timestamp).forEach(log => {
+                        const logDateStr = log.timestamp.toISOString().split('T')[0];
+                        const isLatestDate = logDateStr === latestDateStr;
+
+                        const rowClass = isLatestDate ? 'class="latest-row"' : '';
+                        const timeStr = log.timestamp.toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                        
+                        const dateDisplay = isLatestDate 
+                            ? `<span style="color:#2563eb; font-weight:bold;">${timeStr}</span><span class="latest-badge">Yangi</span>`
+                            : `<span>${timeStr}</span>`;
+
+                        html += `<tr ${rowClass}>
+                            <td style="padding:4px 6px;">${log.bogie}-Aravacha</td>
+                            <td style="padding:4px 6px;"><b>${log.padCode}</b></td>
+                            <td style="padding:4px 6px; color:#0284c7; font-weight:bold;">👤 ${log.user}</td>
+                            <td style="padding:4px 6px;">${dateDisplay}</td>
+                        </tr>`;
+                    });
+
+                    html += `</tbody></table>`;
+                }
+                html += `</div></details>`;
             });
 
             output.innerHTML = html;
+            output.style.display = 'block';
         }
 
-        function selectWagonAndHideReport(wagonName) {
-            selectWagon(wagonName);
-            document.getElementById('report-output').style.display = 'none';
+        function setAllAccordions(isOpen) {
+            document.querySelectorAll('#report-output details.accordion-item').forEach(el => {
+                el.open = isOpen;
+            });
         }
 
         function downloadExcelReport() {
-            if (replacementLogs.length === 0) {
-                alert("Yuklab olish uchun ma'lumotlar mavjud emas!");
-                return;
-            }
-            
-            let csvContent = "data:text/csv;charset=utf-8,Poyezd,Vagon,Kolodka,Xodim,Vaqt\r\n";
-            replacementLogs.forEach(log => {
-                csvContent += `${log.train},${log.wagon},${log.padCode},${log.user},${log.timestamp.toISOString()}\r\n`;
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "tormoz_kolodkalari_hisobot.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            window.location.href = `${API_URL}/report/export-excel?train=${currentTrain}`;
         }
+
+        async function initApp() {
+            await loadPadsData();
+            await loadLogsData();
+            selectTrain('01');
+            selectWagon('TC1');
+        }
+
+        checkAuth();
     </script>
 </body>
 </html>
