@@ -1,3 +1,6 @@
-Flask
-flask-cors
-gunicorn
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+pandas
+openpyxl
