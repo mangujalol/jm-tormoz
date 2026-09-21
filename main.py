@@ -1,79 +1,168 @@
 from datetime import datetime
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from typing import List, Optional
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+import pandas as pd
+from pydantic import BaseModel
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+import io
 
-app = Flask(__name__)
-CORS(app)  # Frontend va backend bir-biri bilan erkin gaplashishi uchun
+# --- MA'LUMOTLAR BAZASINI SOZLASH (SQLite) ---
+SQLALCHEMY_DATABASE_URL = "sqlite:///./tormoz_nazorat.db"
 
-# Vaqtinchalik xotiradagi baza (Ma'lumotlar o'chib ketmasligi uchun uni keyinchalik MongoDB yoki SQLite ga ulash mumkin)
-# Hozircha sinov uchun oddiy lug'at (dictionary) ishlatamiz
-pads_db = []
-logs_db = []
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
+# --- DB MODELLARI ---
+class PadDB(Base):
+    __tablename__ = "pads"
+    id = Column(Integer, primary_key=True, index=True)
+    train_number = Column(String, index=True)
+    wagon_code = Column(String, index=True)
+    pad_index = Column(Integer, index=True)
+    days_used = Column(Integer, default=0)
 
-@app.route("/")
-def home():
-  return "JM Tormoz Nazorati Backend ishlayapti! 🚀"
+class LogDB(Base):
+    __tablename__ = "logs"
+    id = Column(Integer, primary_key=True, index=True)
+    train_number = Column(String, index=True)
+    wagon_code = Column(String, index=True)
+    bogie_number = Column(Integer)
+    pad_index = Column(Integer)
+    user_name = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
+Base.metadata.create_all(bind=engine)
 
-# Hamma kolodkalar holatini olish
-@app.route("/api/pads", methods=["GET"])
-def get_pads():
-  return jsonify(pads_db)
+# --- FASTAPI ILOVASI ---
+app = FastAPI(title="JM Tormoz Nazorati API", version="1.0")
 
+# CORS sozlamalari (Frontend erkin ulanishi uchun)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Ishlab chiqarishda aniq domenlarni ko'rsatish tavsiya etiladi
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Kolodka almashtirilganda ma'lumotni yangilash va logga qo'shish
-@app.route("/api/replace", methods=["POST"])
-def replace_pad():
-  data = request.json
-  train_number = data.get("train_number")
-  wagon_code = data.get("wagon_code")
-  bogie_number = data.get("bogie_number")
-  pad_index = data.get("pad_index")
-  user_name = data.get("user_name", "Anonim")
+# Bog'lanish (Session) olish uchun yordamchifunksiya
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-  # Eski ma'lumot bormi tekshiramiz, bo'lsa yangilaymiz, yo'qsa qo'shamiz
-  found = False
-  for item in pads_db:
-    if (
-        item.get("train_number") == train_number
-        and item.get("wagon_code") == wagon_code
-        and item.get("pad_index") == pad_index
-    ):
-      item["days_used"] = 0
-      item["updated_at"] = datetime.now().isoformat()
-      found = True
-      break
+# --- PYDANTIC SXEMALARI ---
+class ReplaceRequest(BaseModel):
+    train_number: str
+    wagon_code: str
+    bogie_number: int
+    pad_index: int
+    user_name: str
 
-  if not found:
-    pads_db.append({
-        "train_number": train_number,
-        "wagon_code": wagon_code,
-        "pad_index": pad_index,
-        "days_used": 0,
-        "updated_at": datetime.now().isoformat(),
-    })
+# --- BOSHLANG'ICH MA'LUMOTLARNI TO'LDIRISH (AGAR BO'SH BO'LSA) ---
+def init_db_data():
+    db = SessionLocal()
+    if db.query(PadDB).count() == 0:
+        trains = ['01', '02', '03', '04', '05', '06']
+        wagons = ['TC1', '2', '3', '4', '5', '6', 'TC2']
+        for t in trains:
+            for w in wagons:
+                for i in range(1, 17):
+                    db.add(PadDB(train_number=t, wagon_code=w, pad_index=i, days_used=10)) # Boshlang'ich kunlar
+        db.commit()
+    db.close()
 
-  # Tarixga (log) yozish
-  log_entry = {
-      "id": str(len(logs_db) + 1),
-      "train_number": train_number,
-      "wagon_code": wagon_code,
-      "bogie_number": bogie_number,
-      "pad_index": pad_index,
-      "user_name": user_name,
-      "created_at": datetime.now().isoformat(),
-  }
-  logs_db.insert(0, log_entry)  # Yangisini boshiga qo'shish
+init_db_data()
 
-  return jsonify({"status": "success", "message": "Muvaffaqiyatli yangilandi!"})
+# --- ENDPOINTLAR ---
 
+@app.get("/api/pads")
+def get_pads(db: Session = Depends(get_db)):
+    pads = db.query(PadDB).all()
+    return pads
 
-# O'zgarishlar tarixini olish
-@app.route("/api/logs", methods=["GET"])
-def get_logs():
-  return jsonify(logs_db)
+@app.get("/api/logs")
+def get_logs(db: Session = Depends(get_db)):
+    logs = db.query(LogDB).order_by(LogDB.created_at.desc()).all()
+    return logs
 
+@app.post("/api/replace")
+def replace_pad(data: ReplaceRequest, db: Session = Depends(get_db)):
+    # Kolodkani topish va kunini 0 ga tushirish
+    pad = db.query(PadDB).filter(
+        PadDB.train_number == data.train_number,
+        PadDB.wagon_code == data.wagon_code,
+        PadDB.pad_index == data.pad_index
+    ).first()
+    
+    if pad:
+        pad.days_used = 0
+    else:
+        # Agar bazada bo'lmasa, yaratamiz
+        pad = PadDB(
+            train_number=data.train_number,
+            wagon_code=data.wagon_code,
+            pad_index=data.pad_index,
+            days_used=0
+        )
+        db.add(pad)
+    
+    # Log yozish
+    new_log = LogDB(
+        train_number=data.train_number,
+        wagon_code=data.wagon_code,
+        bogie_number=data.bogie_number,
+        pad_index=data.pad_index,
+        user_name=data.user_name,
+        created_at=datetime.utcnow()
+    )
+    db.add(new_log)
+    db.commit()
+    
+    return {"status": "success", "message": "Kolodka muvaffaqiyatli almashtirildi"}
 
-if __name__ == "__main__":
-  app.run(debug=True)
+@app.delete("/api/logs/{log_id}")
+def delete_log(log_id: int, db: Session = Depends(get_db)):
+    log = db.query(LogDB).filter(LogDB.id == log_id).first()
+    if not log:
+        raise HTTPException(status_code=404, detail="Log topilmadi")
+    
+    db.delete(log)
+    db.commit()
+    return {"status": "success", "message": "Log o'chirildi"}
+
+@app.get("/report/export-excel")
+def export_excel(train: Optional[str] = '01', db: Session = Depends(get_db)):
+    logs = db.query(LogDB).filter(LogDB.train_number == train).all()
+    
+    data = []
+    for l in logs:
+        data.append({
+            "Poyezd №": l.train_number,
+            "Vagon": l.wagon_code,
+            "Aravacha": l.bogie_number,
+            "Kolodka Indeksi": l.pad_index,
+            "Mas'ul Xodim": l.user_name,
+            "Almashtirilgan Sana/Vaqt": l.created_at.strftime("%Y-%m-%d %H:%M")
+        })
+        
+    df = pd.DataFrame(data)
+    
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name=f"Poyezd_{train}_Tarix")
+    output.seek(0)
+    
+    headers = {
+        'Content-Disposition': f'attachment; filename="Poyezd_{train}_Hisobot.xlsx"'
+    }
+    return StreamingResponse(output, headers=headers, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
