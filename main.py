@@ -144,13 +144,24 @@ def delete_log(log_id: int, db: Session = Depends(get_db)):
 def export_excel(train: Optional[str] = '01', db: Session = Depends(get_db)):
     logs = db.query(LogDB).filter(LogDB.train_number == train).all()
     
+    # Kolodka indekslarini ularning matnli nomlariga moslashtirish uchun lug'at
+    pad_names = {
+        1: 'ChT1', 2: 'ChI2', 3: 'ÖI2', 4: 'ÖT1',
+        5: 'ChT3', 6: 'ChI4', 7: 'ÖI4', 8: 'ÖT3',
+        9: 'ChT5', 10: 'ChI6', 11: 'ÖI6', 12: 'ÖT5',
+        13: 'ChT7', 14: 'ChI8', 15: 'ÖI8', 16: 'ÖT7'
+    }
+    
     data = []
     for l in logs:
+        # Indeksdan mos nomni olamiz, agar topilmasa raqamning o'zi qoladi
+        pad_code = pad_names.get(l.pad_index, f"K{l.pad_index}")
+        
         data.append({
             "Poyezd №": l.train_number,
             "Vagon": l.wagon_code,
             "Aravacha": l.bogie_number,
-            "Kolodka Indeksi": l.pad_index,
+            "Kolodka": pad_code,  # Endi bu yerda ChT1, ÖI2 kabi nomlar yoziladi
             "Mas'ul Xodim": l.user_name,
             "Almashtirilgan Sana/Vaqt": l.created_at.strftime("%Y-%m-%d %H:%M")
         })
