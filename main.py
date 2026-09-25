@@ -45,8 +45,7 @@ class LogDB(Base):
     bogie_number = Column(Integer)
     pad_index = Column(Integer)
     user_name = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
+    created_at = Column(DateTime, default=lambda: datetime.now(ZoneInfo("Asia/Tashkent")))
 Base.metadata.create_all(bind=engine)
 
 # --- FASTAPI ILOVASI ---
