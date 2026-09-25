@@ -4,4 +4,4 @@ sqlalchemy
 pydantic
 pandas
 openpyxl
-psycopg2-binary
+psycopg[binary]
