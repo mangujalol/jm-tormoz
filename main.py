@@ -131,7 +131,7 @@ def replace_pad(data: ReplaceRequest, db: Session = Depends(get_db)):
         bogie_number=data.bogie_number,
         pad_index=data.pad_index,
         user_name=data.user_name,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(ZoneInfo("Asia/Tashkent"))
     )
     db.add(new_log)
     db.commit()
