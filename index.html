@@ -848,7 +848,6 @@
             document.getElementById('bogie-1-title').innerText = `${bogies[0]}-Aravacha`;
             document.getElementById('bogie-2-title').innerText = `${bogies[1]}-Aravacha`;
 
-            // Aravachalar va g'ildirak juftliklari pozitsiyalarini hisoblash va yangilash
             const wagonIndex = wagons.indexOf(wagonName);
             const basePos = wagonIndex * 4;
 
@@ -1031,6 +1030,7 @@
             `;
             
             wagons.forEach(wagonName => {
+                const wagonIndex = wagons.indexOf(wagonName);
                 const wagonLabel = (wagonName === 'TC1' || wagonName === 'TC2') ? wagonName : `${wagonName}-vagon`;
                 const logsForWagon = currentTrainLogs.filter(l => l.wagon === wagonName);
 
@@ -1050,6 +1050,7 @@
                         <thead>
                             <tr style="background:#e2e8f0; color:#334155;">
                                 <th style="padding:4px 6px;">Aravacha</th>
+                                <th style="padding:4px 6px;">Pozitsiya</th>
                                 <th style="padding:4px 6px;">Kolodka</th>
                                 <th style="padding:4px 6px;">Xodim (Login)</th>
                                 <th style="padding:4px 6px;">Sana va Vaqt</th>
@@ -1064,12 +1065,17 @@
                         const rowClass = isLatestDate ? 'class="latest-row"' : '';
                         const timeStr = log.timestamp.toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
                         
+                        // Pozitsiyani hisoblash (1 dan 28 gacha)
+                        const localAxle = Math.floor((log.pad - 1) / 4) + 1;
+                        const globalPosition = wagonIndex * 4 + localAxle;
+
                         const dateDisplay = isLatestDate 
                             ? `<span style="color:#2563eb; font-weight:bold;">${timeStr}</span><span class="latest-badge">Yangi</span>`
                             : `<span>${timeStr}</span>`;
 
                         html += `<tr ${rowClass}>
                             <td style="padding:4px 6px;">${log.bogie}-Aravacha</td>
+                            <td style="padding:4px 6px; font-weight: bold; color: #2563eb;">${globalPosition}-pozitsiya</td>
                             <td style="padding:4px 6px;"><b>${log.padCode}</b></td>
                             <td style="padding:4px 6px; color:#0284c7; font-weight:bold;">👤 ${log.user}</td>
                             <td style="padding:4px 6px;">${dateDisplay}</td>
