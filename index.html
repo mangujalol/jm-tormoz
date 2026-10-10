@@ -58,12 +58,14 @@
             color: #1a365d;
             margin-bottom: 6px;
             font-size: 24px;
+            text-align: center;
         }
 
         p.subtitle {
             color: #64748b;
             margin-bottom: 15px;
             font-size: 14px;
+            text-align: center;
         }
 
         /* Poyezd Tanlash Bloki */
@@ -234,6 +236,18 @@
             padding: 8px 4px;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
+        }
+
+        .axle-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+            text-align: center;
+            background: #f1f5f9;
+            width: 100%;
+            padding: 2px 0;
+            border-radius: 4px;
         }
 
         .wheel-axle {
@@ -564,6 +578,7 @@
             
             <!-- 1-O'q -->
             <div class="wheel-axle-group">
+                <div class="axle-label" id="axle-label-1">1-pozitsiya</div>
                 <div class="wheel-axle">
                     <div class="wheel-side">
                         <button class="pad-btn" onclick="openConfirmModal(1, 'ChT1')" id="pad-1">ChT1</button>
@@ -581,6 +596,7 @@
 
             <!-- 2-O'q -->
             <div class="wheel-axle-group">
+                <div class="axle-label" id="axle-label-2">2-pozitsiya</div>
                 <div class="wheel-axle">
                     <div class="wheel-side">
                         <button class="pad-btn" onclick="openConfirmModal(5, 'ChT3')" id="pad-5">ChT3</button>
@@ -603,6 +619,7 @@
             
             <!-- 3-O'q -->
             <div class="wheel-axle-group">
+                <div class="axle-label" id="axle-label-3">3-pozitsiya</div>
                 <div class="wheel-axle">
                     <div class="wheel-side">
                         <button class="pad-btn" onclick="openConfirmModal(9, 'ChT5')" id="pad-9">ChT5</button>
@@ -620,6 +637,7 @@
 
             <!-- 4-O'q -->
             <div class="wheel-axle-group">
+                <div class="axle-label" id="axle-label-4">4-pozitsiya</div>
                 <div class="wheel-axle">
                     <div class="wheel-side">
                         <button class="pad-btn" onclick="openConfirmModal(13, 'ChT7')" id="pad-13">ChT7</button>
@@ -829,6 +847,15 @@
             const bogies = bogieMapping[wagonName];
             document.getElementById('bogie-1-title').innerText = `${bogies[0]}-Aravacha`;
             document.getElementById('bogie-2-title').innerText = `${bogies[1]}-Aravacha`;
+
+            // Aravachalar va g'ildirak juftliklari pozitsiyalarini hisoblash va yangilash
+            const wagonIndex = wagons.indexOf(wagonName);
+            const basePos = wagonIndex * 4;
+
+            document.getElementById('axle-label-1').innerText = `${basePos + 1}-pozitsiya`;
+            document.getElementById('axle-label-2').innerText = `${basePos + 2}-pozitsiya`;
+            document.getElementById('axle-label-3').innerText = `${basePos + 3}-pozitsiya`;
+            document.getElementById('axle-label-4').innerText = `${basePos + 4}-pozitsiya`;
 
             const trainBody = document.getElementById('train-body');
             const dirTop = document.getElementById('dir-top');
