@@ -13,10 +13,8 @@ from sqlalchemy.orm import sessionmaker, Session
 import io
 
 # --- MA'LUMOTLAR BAZASINI SOZLASH (PostgreSQL yoki SQLite) ---
-# Render'dan DATABASE_URL o'qib olinadi, bo'lmasa lokalda sqlite ishlatiladi
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./tormoz_nazorat.db")
 
-# Render ba'zan 'postgres://' beradi, SQLAlchemy uni 'postgresql://' qilishni talab qiladi
 if SQLALCHEMY_DATABASE_URL and SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
@@ -51,16 +49,14 @@ Base.metadata.create_all(bind=engine)
 # --- FASTAPI ILOVASI ---
 app = FastAPI(title="JM Tormoz Nazorati API", version="1.0")
 
-# CORS sozlamalari (Frontend erkin ulanishi uchun)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Ishlab chiqarishda aniq domenlarni ko'rsatish tavsiya etiladi
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Bog'lanish (Session) olish uchun yordamchifunksiya
 def get_db():
     db = SessionLocal()
     try:
@@ -76,7 +72,6 @@ class ReplaceRequest(BaseModel):
     pad_index: int
     user_name: str
 
-# --- BOSHLANG'ICH MA'LUMOTLARNI TO'LDIRISH (AGAR BO'SH BO'LSA) ---
 def init_db_data():
     db = SessionLocal()
     if db.query(PadDB).count() == 0:
@@ -85,7 +80,7 @@ def init_db_data():
         for t in trains:
             for w in wagons:
                 for i in range(1, 17):
-                    db.add(PadDB(train_number=t, wagon_code=w, pad_index=i, days_used=10)) # Boshlang'ich kunlar
+                    db.add(PadDB(train_number=t, wagon_code=w, pad_index=i, days_used=10))
         db.commit()
     db.close()
 
@@ -105,7 +100,6 @@ def get_logs(db: Session = Depends(get_db)):
 
 @app.post("/api/replace")
 def replace_pad(data: ReplaceRequest, db: Session = Depends(get_db)):
-    # Kolodkani topish va kunini 0 ga tushirish
     pad = db.query(PadDB).filter(
         PadDB.train_number == data.train_number,
         PadDB.wagon_code == data.wagon_code,
@@ -115,7 +109,6 @@ def replace_pad(data: ReplaceRequest, db: Session = Depends(get_db)):
     if pad:
         pad.days_used = 0
     else:
-        # Agar bazada bo'lmasa, yaratamiz
         pad = PadDB(
             train_number=data.train_number,
             wagon_code=data.wagon_code,
@@ -124,7 +117,6 @@ def replace_pad(data: ReplaceRequest, db: Session = Depends(get_db)):
         )
         db.add(pad)
     
-    # Log yozish
     new_log = LogDB(
         train_number=data.train_number,
         wagon_code=data.wagon_code,
@@ -152,7 +144,6 @@ def delete_log(log_id: int, db: Session = Depends(get_db)):
 def export_excel(train: Optional[str] = '01', db: Session = Depends(get_db)):
     logs = db.query(LogDB).filter(LogDB.train_number == train).all()
     
-    # Kolodka indekslarini ularning matnli nomlariga moslashtirish uchun lug'at
     pad_names = {
         1: 'ChT1', 2: 'ChI2', 3: 'ÖI2', 4: 'ÖT1',
         5: 'ChT3', 6: 'ChI4', 7: 'ÖI4', 8: 'ÖT3',
@@ -160,16 +151,26 @@ def export_excel(train: Optional[str] = '01', db: Session = Depends(get_db)):
         13: 'ChT7', 14: 'ChI8', 15: 'ÖI8', 16: 'ÖT7'
     }
     
+    wagons_list = ['TC1', '2', '3', '4', '5', '6', 'TC2']
     data = []
+    
     for l in logs:
-        # Indeksdan mos nomni olamiz, agar topilmasa raqamning o'zi qoladi
         pad_code = pad_names.get(l.pad_index, f"K{l.pad_index}")
+        
+        # Pozitsiyani hisoblash (1 dan 28 gacha)
+        try:
+            wagon_idx = wagons_list.index(l.wagon_code)
+        except ValueError:
+            wagon_idx = 0
+        local_axle = (l.pad_index - 1) // 4 + 1
+        global_position = wagon_idx * 4 + local_axle
         
         data.append({
             "Poyezd №": l.train_number,
             "Vagon": l.wagon_code,
             "Aravacha": l.bogie_number,
-            "Kolodka": pad_code,  # Endi bu yerda ChT1, ÖI2 kabi nomlar yoziladi
+            "Pozitsiya": f"{global_position}-pozitsiya",
+            "Kolodka": pad_code,
             "Mas'ul Xodim": l.user_name,
             "Almashtirilgan Sana/Vaqt": l.created_at.strftime("%Y-%m-%d %H:%M")
         })
