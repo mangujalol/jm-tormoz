@@ -72,13 +72,22 @@
         .train-selector-container {
             background: #ffffff;
             border: 1px solid #cbd5e1;
-            padding: 10px 16px;
+            padding: 12px 16px;
             border-radius: 12px;
             margin-bottom: 15px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .train-selector-row {
+            display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -115,6 +124,109 @@
             border-color: #047857;
             box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
         }
+
+        /* Salon filtrlari tugmasi */
+        .salon-filter-btn {
+            width: 100%;
+            padding: 8px 16px;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: background-color 0.2s;
+        }
+
+        .salon-filter-btn:hover {
+            background-color: #0369a1;
+        }
+
+        /* FILTRLAR BO'LIMI STILI */
+        .filter-section {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            display: none;
+        }
+
+        .filter-section.active {
+            display: block;
+        }
+
+        .filter-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .filter-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .filter-input:focus { border-color: #2563eb; }
+
+        .filter-btn-action {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .filter-btn-action:hover { background-color: #1d4ed8; }
+
+        .filter-alert {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .filter-info-box {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .success-reset-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 9px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .success-reset-btn:hover { background-color: #059669; }
 
         /* Vagonlar tugmasi */
         .wagon-selector {
@@ -543,14 +655,43 @@
 
     <!-- POYEZD TANLASH TUGMALARI -->
     <div class="train-selector-container">
-        <span class="train-selector-label">🚆 Poyezd №:</span>
-        <div class="train-buttons">
-            <button class="train-btn active" data-train="01" onclick="selectTrain('01')">01</button>
-            <button class="train-btn" data-train="02" onclick="selectTrain('02')">02</button>
-            <button class="train-btn" data-train="03" onclick="selectTrain('03')">03</button>
-            <button class="train-btn" data-train="04" onclick="selectTrain('04')">04</button>
-            <button class="train-btn" data-train="05" onclick="selectTrain('05')">05</button>
-            <button class="train-btn" data-train="06" onclick="selectTrain('06')">06</button>
+        <div class="train-selector-row">
+            <span class="train-selector-label">🚆 Poyezd №:</span>
+            <div class="train-buttons">
+                <button class="train-btn active" data-train="01" onclick="selectTrain('01')">01</button>
+                <button class="train-btn" data-train="02" onclick="selectTrain('02')">02</button>
+                <button class="train-btn" data-train="03" onclick="selectTrain('03')">03</button>
+                <button class="train-btn" data-train="04" onclick="selectTrain('04')">04</button>
+                <button class="train-btn" data-train="05" onclick="selectTrain('05')">05</button>
+                <button class="train-btn" data-train="06" onclick="selectTrain('06')">06</button>
+            </div>
+        </div>
+        <button class="salon-filter-btn" onclick="toggleFilterSection()">💨 Salon filtrlari</button>
+    </div>
+
+    <!-- FILTRLAR BO'LIMI -->
+    <div class="filter-section" id="filter-section">
+        <h3 style="font-size: 15px; color: #1e293b; margin-bottom: 6px;">🚆 Poyezd №<span id="filter-train-num">01</span> — Salon Filtrlari Nazorati</h3>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Poyezdning joriy yurish masofasini (km) kiriting:</p>
+        
+        <div class="filter-input-group">
+            <input type="number" id="train-mileage-input" class="filter-input" placeholder="Masalan: 1" min="0">
+            <button class="filter-btn-action" onclick="saveTrainMileage()">Saqlash</button>
+        </div>
+
+        <div class="filter-alert" id="filter-alert">
+            ⚠️ DIQQAT! Poyezd probegi belgilangan limitga yetdi yoki oshdi. Salon filtrlarini almashtirish shart!
+        </div>
+
+        <button class="success-reset-btn" onclick="resetCabinFilters()">✅ Salon filtrlari almashtirildi</button>
+
+        <div class="filter-info-box" id="filter-info-box">
+            <div><b>Hozirgi probeg:</b> <span id="info-current-mileage">0</span> km</div>
+            <div><b>Keyingi filtr almashish chegarasi:</b> <span id="info-target-mileage">---</span> km</div>
+            <div><b>Almashuvgacha qoldi:</b> <span id="info-remaining-mileage">---</span> km</div>
+            <div style="margin-top: 4px; font-size: 11px; color: #475569; border-top: 1px dashed #cbd5e1; padding-top: 4px;">
+                <b>Oxirgi almashtirgan xodim:</b> <span id="info-user">---</span> (<span id="info-date">---</span>)
+            </div>
         </div>
     </div>
 
@@ -575,8 +716,6 @@
         <!-- 1-Aravacha -->
         <div class="bogie">
             <span class="bogie-title" id="bogie-1-title">1-Aravacha</span>
-            
-            <!-- 1-O'q -->
             <div class="wheel-axle-group">
                 <div class="axle-label" id="axle-label-1">1-pozitsiya</div>
                 <div class="wheel-axle">
@@ -593,8 +732,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 2-O'q -->
             <div class="wheel-axle-group">
                 <div class="axle-label" id="axle-label-2">2-pozitsiya</div>
                 <div class="wheel-axle">
@@ -616,8 +753,6 @@
         <!-- 2-Aravacha -->
         <div class="bogie">
             <span class="bogie-title" id="bogie-2-title">2-Aravacha</span>
-            
-            <!-- 3-O'q -->
             <div class="wheel-axle-group">
                 <div class="axle-label" id="axle-label-3">3-pozitsiya</div>
                 <div class="wheel-axle">
@@ -634,8 +769,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 4-O'q -->
             <div class="wheel-axle-group">
                 <div class="axle-label" id="axle-label-4">4-pozitsiya</div>
                 <div class="wheel-axle">
@@ -727,6 +860,8 @@
         let selectedPadCode = '';
         let currentUser = localStorage.getItem('jm_username') || null;
 
+        let filterData = {};
+
         const bogieMapping = {
             'TC1': [1, 2], '2': [3, 4], '3': [5, 6],
             '4': [7, 8], '5': [9, 10], '6': [11, 12], 'TC2': [13, 14]
@@ -744,6 +879,127 @@
                 }
             });
         });
+
+        /* BACKEND KOD BILAN BOG'LANGAN FILTRLAR MANTIQI */
+        async function loadFiltersData() {
+            try {
+                const res = await fetch(`${API_URL}/api/filters`);
+                if (res.ok) {
+                    const data = await res.json();
+                    data.forEach(f => {
+                        filterData[f.train_number] = {
+                            currentMileage: f.current_mileage,
+                            targetMileage: f.target_mileage,
+                            lastUser: f.last_user,
+                            lastDate: f.last_date
+                        };
+                    });
+                    updateFilterUI();
+                }
+            } catch (err) {
+                console.error("Filtrlarni yuklashda xatolik:", err);
+            }
+        }
+
+        function toggleFilterSection() {
+            const section = document.getElementById('filter-section');
+            section.classList.toggle('active');
+            if (section.classList.contains('active')) {
+                updateFilterUI();
+            }
+        }
+
+        function updateFilterUI() {
+            document.getElementById('filter-train-num').innerText = currentTrain;
+            const data = filterData[currentTrain] || { currentMileage: 0, targetMileage: 0, lastUser: '---', lastDate: '---' };
+            
+            const mileageInput = document.getElementById('train-mileage-input');
+            mileageInput.value = data.currentMileage > 0 ? data.currentMileage : '';
+
+            const infoBox = document.getElementById('filter-info-box');
+            const alertDiv = document.getElementById('filter-alert');
+
+            if (data.currentMileage === 0 && data.targetMileage === 0) {
+                infoBox.style.display = 'none';
+                alertDiv.style.display = 'none';
+                return;
+            }
+
+            infoBox.style.display = 'block';
+            document.getElementById('info-current-mileage').innerText = data.currentMileage.toLocaleString();
+            document.getElementById('info-target-mileage').innerText = data.targetMileage.toLocaleString();
+            document.getElementById('info-user').innerText = data.lastUser;
+            document.getElementById('info-date').innerText = data.lastDate;
+
+            const remaining = data.targetMileage - data.currentMileage;
+
+            if (data.currentMileage >= data.targetMileage) {
+                document.getElementById('info-remaining-mileage').innerText = "0 (Filtrni almashtirish kerak!)";
+                alertDiv.style.display = 'block';
+                alertDiv.innerHTML = `⚠️ DIQQAT! Poyezd №${currentTrain} probegi ${data.currentMileage.toLocaleString()} km ga yetdi (Limit: ${data.targetMileage.toLocaleString()} km). Salon filtrlarini almashtirib, quyidagi tugmani bosing!`;
+            } else {
+                document.getElementById('info-remaining-mileage').innerText = remaining.toLocaleString() + " km";
+                alertDiv.style.display = 'none';
+            }
+        }
+
+        async function saveTrainMileage() {
+            const inputVal = document.getElementById('train-mileage-input').value;
+            const mileage = parseInt(inputVal);
+
+            if (isNaN(mileage) || mileage < 0) {
+                alert("Iltimos, to'g'ri probeg masofasini kiriting!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/filters/mileage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        train_number: currentTrain,
+                        current_mileage: mileage
+                    })
+                });
+
+                if (res.ok) {
+                    await loadFiltersData();
+                    alert("Probeg muvaffaqiyatli saqlandi!");
+                } else {
+                    alert("Saqlashda xatolik yuz berdi!");
+                }
+            } catch (err) {
+                console.error("Probegni saqlashda xatolik:", err);
+            }
+        }
+
+        async function resetCabinFilters() {
+            const data = filterData[currentTrain];
+            if (!data || data.currentMileage === 0) {
+                alert("Avval poyezdning joriy probegini kiriting va saqlang!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/filters/reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        train_number: currentTrain,
+                        user_name: currentUser || 'Anonim'
+                    })
+                });
+
+                if (res.ok) {
+                    await loadFiltersData();
+                    alert(`✅ Salon filtrlari almashtirildi tasdiqlandi!\nXodim: ${currentUser}`);
+                } else {
+                    alert("Almashtirishni tasdiqlashda xatolik yuz berdi!");
+                }
+            } catch (err) {
+                console.error("Filtrni qayta sozlashda xatolik:", err);
+            }
+        }
 
         /* LOGIN VA AUTH */
         function checkAuth() {
@@ -834,6 +1090,7 @@
             });
             updateHeaderTitle();
             updateUI();
+            updateFilterUI();
         }
 
         function selectWagon(wagonName) {
@@ -1003,7 +1260,6 @@
             }
         }
 
-        /* YASHIRILADIGAN VAGON TARIXI HISOBOTI */
         async function fetchSummaryReport() {
             await loadLogsData();
             const output = document.getElementById('report-output');
@@ -1065,7 +1321,6 @@
                         const rowClass = isLatestDate ? 'class="latest-row"' : '';
                         const timeStr = log.timestamp.toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
                         
-                        // Pozitsiyani hisoblash (1 dan 28 gacha)
                         const localAxle = Math.floor((log.pad - 1) / 4) + 1;
                         const globalPosition = wagonIndex * 4 + localAxle;
 
@@ -1104,6 +1359,7 @@
         async function initApp() {
             await loadPadsData();
             await loadLogsData();
+            await loadFiltersData();
             selectTrain('01');
             selectWagon('TC1');
         }
