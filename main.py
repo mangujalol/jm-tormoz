@@ -44,6 +44,17 @@ class LogDB(Base):
     pad_index = Column(Integer)
     user_name = Column(String)
     created_at = Column(DateTime(timezone=True))
+
+# SALON FILTRLARI UCHUN YANGI DB MODELLI
+class FilterDB(Base):
+    __tablename__ = "cabin_filters"
+    id = Column(Integer, primary_key=True, index=True)
+    train_number = Column(String, unique=True, index=True)
+    current_mileage = Column(Integer, default=0)
+    target_mileage = Column(Integer, default=0)
+    last_user = Column(String, default="---")
+    last_date = Column(String, default="---")
+
 Base.metadata.create_all(bind=engine)
 
 # --- FASTAPI ILOVASI ---
@@ -72,16 +83,33 @@ class ReplaceRequest(BaseModel):
     pad_index: int
     user_name: str
 
+class MileageSaveRequest(BaseModel):
+    train_number: str
+    current_mileage: int
+
+class FilterResetRequest(BaseModel):
+    train_number: str
+    user_name: str
+
 def init_db_data():
     db = SessionLocal()
+    trains = ['01', '02', '03', '04', '05', '06']
+    wagons = ['TC1', '2', '3', '4', '5', '6', 'TC2']
+    
+    # Pads jadvallarini boshlang'ich to'ldirish
     if db.query(PadDB).count() == 0:
-        trains = ['01', '02', '03', '04', '05', '06']
-        wagons = ['TC1', '2', '3', '4', '5', '6', 'TC2']
         for t in trains:
             for w in wagons:
                 for i in range(1, 17):
                     db.add(PadDB(train_number=t, wagon_code=w, pad_index=i, days_used=10))
         db.commit()
+
+    # Cabin filters jadvallarini boshlang'ich to'ldirish
+    for t in trains:
+        filter_exist = db.query(FilterDB).filter(FilterDB.train_number == t).first()
+        if not filter_exist:
+            db.add(FilterDB(train_number=t, current_mileage=0, target_mileage=0, last_user="---", last_date="---"))
+    db.commit()
     db.close()
 
 init_db_data()
@@ -97,6 +125,44 @@ def get_pads(db: Session = Depends(get_db)):
 def get_logs(db: Session = Depends(get_db)):
     logs = db.query(LogDB).order_by(LogDB.created_at.desc()).all()
     return logs
+
+# SALON FILTRLARI UCHUN YANGI ENDPOINTLAR
+@app.get("/api/filters")
+def get_filters(db: Session = Depends(get_db)):
+    filters = db.query(FilterDB).all()
+    return filters
+
+@app.post("/api/filters/mileage")
+def save_mileage(data: MileageSaveRequest, db: Session = Depends(get_db)):
+    f = db.query(FilterDB).filter(FilterDB.train_number == data.train_number).first()
+    if not f:
+        f = FilterDB(train_number=data.train_number)
+        db.add(f)
+    
+    if f.target_mileage == 0:
+        f.target_mileage = data.current_mileage + 12000
+
+    f.current_mileage = data.current_mileage
+    db.commit()
+    db.refresh(f)
+    return {"status": "success", "data": f}
+
+@app.post("/api/filters/reset")
+def reset_filter(data: FilterResetRequest, db: Session = Depends(get_db)):
+    f = db.query(FilterDB).filter(FilterDB.train_number == data.train_number).first()
+    if not f:
+        raise HTTPException(status_code=404, detail="Poyezd topilmadi")
+
+    now = datetime.now(ZoneInfo("Asia/Tashkent"))
+    date_str = now.strftime("%Y-%m-%d %H:%M")
+
+    f.target_mileage = f.current_mileage + 12000
+    f.last_user = data.user_name
+    f.last_date = date_str
+
+    db.commit()
+    db.refresh(f)
+    return {"status": "success", "data": f}
 
 @app.post("/api/replace")
 def replace_pad(data: ReplaceRequest, db: Session = Depends(get_db)):
@@ -157,7 +223,6 @@ def export_excel(train: Optional[str] = '01', db: Session = Depends(get_db)):
     for l in logs:
         pad_code = pad_names.get(l.pad_index, f"K{l.pad_index}")
         
-        # Pozitsiyani hisoblash (1 dan 28 gacha)
         try:
             wagon_idx = wagons_list.index(l.wagon_code)
         except ValueError:
